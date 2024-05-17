@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -6,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/CredenceAnalytics')
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log(err));
 
@@ -69,7 +70,6 @@ app.delete('/api/books', async (req, res) => {
     }
 });
 
-
 app.delete('/api/books/:id', async (req, res) => {
     try {
         const deletedBook = await Book.findByIdAndDelete(req.params.id);
@@ -82,4 +82,8 @@ app.delete('/api/books/:id', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = app;
+
+if (require.main === module) {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
